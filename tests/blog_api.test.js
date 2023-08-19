@@ -9,7 +9,7 @@ const helper = require('../utils/list_helper')
 mongoose.set('bufferTimeoutMS', 30000)
 
 
-describe('http get tests', () => {
+describe('http tests', () => {
     // first initializing the DB
     beforeEach(async () => {
         await Blog.deleteMany({})
@@ -17,6 +17,7 @@ describe('http get tests', () => {
         const blogModels = helper.initialBlogs.map(b => new Blog(b))
         const blogPromises = blogModels.map(m => m.save())
         await Promise.all(blogPromises)
+        console.log('% writin data done %')
     }, 100000)
 
     test('data returned as json', async () => {
@@ -73,7 +74,7 @@ describe('http get tests', () => {
 
     })
 
-    test('blog without title return error', async () => {
+    test('blog without title/url return error', async () => {
         const nuBlog = {
             likes: 0
         }
@@ -83,6 +84,22 @@ describe('http get tests', () => {
             .send(nuBlog)
             .expect(400)
 
+    })
+
+    test('testing delete', async () => {
+        const blogsAtFirst = await helper.inDB()
+        const blog = blogsAtFirst[0]
+
+        console.log('blog is what ? => ', blog)
+
+        await api
+            .delete(`/api/blogs/${blog.id}`)
+            .expect(204)
+
+        const blogsAtEnd = await helper.inDB()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+        const titles = blogsAtEnd.map(b => b.title)
+        expect(titles).not.toContain(blog.title)
     })
 })
 
