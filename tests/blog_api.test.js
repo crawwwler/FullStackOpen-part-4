@@ -2,14 +2,15 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const api = supertest(app) //superagent object
 const helper = require('../utils/list_helper')
-
+const bcrypt = require('bcrypt')
 
 mongoose.set('bufferTimeoutMS', 30000)
 
 
-describe('http tests', () => {
+describe('http blog tests', () => {
     // first initializing the DB
     beforeEach(async () => {
         await Blog.deleteMany({})
@@ -100,6 +101,108 @@ describe('http tests', () => {
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
         const titles = blogsAtEnd.map(b => b.title)
         expect(titles).not.toContain(blog.title)
+    })
+
+    test('testing update', async () => {
+        const blogsAtFirst = await helper.inDB()
+        const blog = blogsAtFirst[0]
+        const blogTwo = { ...blog, title: "something else", likes: 100 }
+
+        const result = await api
+            .put(`/api/blogs/${blog.id}`)
+            .send(blogTwo)
+            .expect(200)
+            .expect("Content-Type", /application\/json/)
+
+        const blogsAtEnd = await helper.inDB()
+        expect(blogsAtEnd).toHaveLength(blogsAtFirst.length)
+        const titles = blogsAtEnd.map(b => b.title)
+        expect(titles).not.toContain(blog.title)
+        expect(result.body.title).toBe(blogTwo.title)
+        expect(result.body.likes).toBe(blogTwo.likes)
+    })
+})
+
+
+describe('http user tests', () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+        const passwordHash = await bcrypt.hash('Abcd123456', 10)
+        const usertest = new User({ username: 'crawwwler', name: 'shahin', passwordHash })
+        await usertest.save()
+    }, 100000)
+
+    test('creation test', async () => {
+        const usersAtStart = await helper.usersInDB()
+
+        const nuUser = {
+            username: "test1user",
+            name: "testone",
+            password: "AaBb001373"
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(nuUser)
+            .expect(201)
+            .expect("Content-Type", /application\/json/)
+
+        const usersAtEnd = await helper.usersInDB()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+        expect(result.body.username).toBe(nuUser.username)
+    })
+
+    test('username must be unique', async () => {
+        const usersAtStart = await helper.usersInDB()
+        const nuUser = {
+            username: "crawwwler",
+            name: "shahin",
+            password: "Abc1234564"
+        }
+
+        await api
+            .post('/api/users')
+            .send(nuUser)
+            .expect(400)
+
+        const usersAtEnd = await helper.usersInDB()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    test('username cannot be less than 3', async () => {
+        const usersAtStart = await helper.usersInDB()
+
+        const nuUser = {
+            username: "aw",
+            name: "monkey",
+            password: "ERer00110011"
+        }
+
+        await api
+            .post('/api/users')
+            .send(nuUser)
+            .expect(400)
+
+        const usersAtEnd = await helper.usersInDB()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    test('password cannot be weak', async () => {
+        const usersAtStart = await helper.usersInDB()
+
+        const nuUser = {
+            username: "something4",
+            name: "someone good",
+            password: "aa"
+        }
+
+        await api
+            .post('/api/users')
+            .send(nuUser)
+            .expect(400)
+
+        const usersAtEnd = await helper.usersInDB()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
     })
 })
 
