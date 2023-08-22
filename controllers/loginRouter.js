@@ -3,19 +3,19 @@ const bcrypt = require('bcrypt')
 const router = require('express').Router()
 const User = require('../models/user')
 
-// POST METHOD FOR LOGIN 
+// POST METHOD FOR LOGIN
 router.post('/', async (request, response) => {
     const { username, password } = request.body
 
     const user = await User.findOne({ username })
-    // CHECKING IF PASSWORD IS MATCH - SOMEHOW -WITH THE HASH WE MADE FROM THE PASSWORD
-    //  CHECKING WITH BCRYPT.COMPARE METHOD
+    // CHECKING IF PASSWORD IS MATCH
+    //WITH BCRYPT.COMPARE METHOD
     const isPassCorrect = user === null ? false : await bcrypt.compare(password, user.passwordHash)
     // IF USER NOT FOUND OR PASSWORD INCORRECT WE RETURN 401 , UNAUTHORIZED STATUS
     if (!(user && isPassCorrect)) {
 
         return response.status(401).json({
-            error: "incorrect user / password"
+            error: 'incorrect user / password'
         })
     }
 

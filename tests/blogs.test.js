@@ -47,10 +47,10 @@ describe('favorite blogs', () => {
         const blogs = helper.initialBlogs
 
         const fv = {
-            _id: "5a422b3a1b54a676234d17f9",
-            title: "Canonical string reduction",
-            author: "Edsger W. Dijkstra",
-            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            _id: '5a422b3a1b54a676234d17f9',
+            title: 'Canonical string reduction',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
             likes: 12,
             __v: 0
         }
@@ -66,7 +66,7 @@ describe('author tests', () => {
         const blogs = helper.initialBlogs
 
         const at = {
-            author: "Robert C. Martin",
+            author: 'Robert C. Martin',
             blogs: 3
         }
 
@@ -78,7 +78,7 @@ describe('author tests', () => {
         const blogs = helper.initialBlogs
 
         const fv = {
-            author: "Edsger W. Dijkstra",
+            author: 'Edsger W. Dijkstra',
             likes: 17
         }
 

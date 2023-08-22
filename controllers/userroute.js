@@ -4,16 +4,16 @@ const User = require('../models/user')
 
 
 router.get('/', async (request, response) => {
-    const users = await User.find({}).populate('blogs')
+    const users = await User.find({}).populate('blogs', { title: 1, author: 1, url: 1, likes: 1 })
     response.json(users)
 })
 
 
 router.post('/', async (request, response) => {
     const { username, name, password } = request.body
-
+    // PASSWORD SHOULD BE ATLEAST 8 CHARACTERS AND A LETTER AND A NUMBER
     if (!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password))) {
-        return response.status(400).json({ error: "password is missing or not strong enough" })
+        return response.status(400).json({ error: 'password is missing or not strong enough' })
     }
 
     const saltRounds = 10

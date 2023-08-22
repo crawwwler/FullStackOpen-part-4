@@ -1,11 +1,13 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+const mw = require('../utils/middleware')
 
 
 
 router.get('/', async (request, response) => {
-    const blogs = await Blog.find({}).populate('user')
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
     response.json(blogs)
 })
 
@@ -20,27 +22,53 @@ router.get('/:id', async (request, response) => {
 })
 
 
-router.post('/', async (request, response) => {
+router.post('/', mw.userExtractor, async (request, response) => {
     const body = request.body
-    const user = await User.find({})
-    console.log("user is ==> ", user)
-    //console.log("userID is ==> ", userID)
+    /*const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+        return response.status(401).json({
+            error: "invalid token"
+        })
+    }*/
+
+    const user = request.user
+
     const blog = new Blog({
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes === undefined ? 0 : body.likes,
-        user: user[0]
+        user: user._id
     })
+
     const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+
     response.status(201).json(savedBlog)
 })
 
 
-router.delete('/:id', async (request, response) => {
-    await Blog.findByIdAndDelete(request.params.id)
-    response.status(204).end()
+
+router.delete('/:id', mw.userExtractor, async (request, response) => {
+    /*const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+    if (!decodedToken.id) {
+        return response.status(401).json({ error: 'unathorized user' })
+    }*/
+
+
+    const user = request.user
+    const blog = await Blog.findById(request.params.id)
+
+    if (blog.user.toString() === user._id.toString()) {
+        await Blog.findByIdAndDelete(request.params.id)
+        response.status(204).end()
+    } else {
+        response.status(401).json({ error: " you're not allowed to do this" })
+    }
 })
+
 
 router.put('/:id', async (request, response) => {
     const body = request.body

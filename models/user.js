@@ -7,9 +7,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: {
             value: true,
-            message: "username must be unique"
+            message: 'username must be unique'
         },
-        minLength: [3, "username must be atleast 3 characters"],
+        minLength: [3, 'username must be atleast 3 characters'],
         validate: {
             validator: username => /^[a-zA-Z0-9_]+$/.test(username),
             message: props => `${props.value} is not a valid username`
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     blogs: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Blog"
+            ref: 'Blog'
         }
     ]
 })
