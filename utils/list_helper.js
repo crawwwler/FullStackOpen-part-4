@@ -121,11 +121,11 @@ const usersInDB = async () => {
 }
 
 
-// RETURN THE TOKEN FOR TESTING 
+// RETURN THE TOKEN FOR TESTING
 const getToken = async () => {
     await User.deleteMany({})
     const passHash = bcrypt.hash('Abcd123456', 10)
-    const user = new User({ username: "test0", name: "test", passHash })
+    const user = new User({ username: 'test0', name: 'test', passHash })
     await user.save()
     return jwt.sign({ id: user._id }, process.env.SECRET)
 }

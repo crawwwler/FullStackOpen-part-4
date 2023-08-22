@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+//const User = require('../models/user')
+//const jwt = require('jsonwebtoken')
 const mw = require('../utils/middleware')
 
 
@@ -65,7 +65,7 @@ router.delete('/:id', mw.userExtractor, async (request, response) => {
         await Blog.findByIdAndDelete(request.params.id)
         response.status(204).end()
     } else {
-        response.status(401).json({ error: " you're not allowed to do this" })
+        response.status(401).json({ error: ' you\'re not allowed to do this' })
     }
 })
 
