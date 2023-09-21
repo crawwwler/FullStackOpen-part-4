@@ -24,6 +24,7 @@ router.post('/', async (request, response) => {
         id: user._id
     }
 
+
     const token = jwt.sign(userToken, process.env.SECRET) // SECRET DEFINED IN .ENV
 
     response.status(200).send({ token, username: user.username, name: user.name })
