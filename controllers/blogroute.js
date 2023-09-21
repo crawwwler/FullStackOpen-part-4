@@ -24,6 +24,8 @@ router.get('/:id', async (request, response) => {
 
 router.post('/', mw.userExtractor, async (request, response) => {
     const body = request.body
+
+
     /*const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
         return response.status(401).json({
@@ -57,7 +59,6 @@ router.delete('/:id', mw.userExtractor, async (request, response) => {
         return response.status(401).json({ error: 'unathorized user' })
     }*/
 
-
     const user = request.user
     const blog = await Blog.findById(request.params.id)
 
@@ -76,7 +77,8 @@ router.put('/:id', async (request, response) => {
         title: body.title,
         author: body.author,
         url: body.url,
-        likes: body.likes
+        likes: body.likes,
+        user: body.user._id
     }
 
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
