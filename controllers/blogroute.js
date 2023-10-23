@@ -1,7 +1,5 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
-//const User = require('../models/user')
-//const jwt = require('jsonwebtoken')
 const mw = require('../utils/middleware')
 
 
@@ -25,14 +23,6 @@ router.get('/:id', async (request, response) => {
 router.post('/', mw.userExtractor, async (request, response) => {
     const body = request.body
 
-
-    /*const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
-        return response.status(401).json({
-            error: "invalid token"
-        })
-    }*/
-
     const user = request.user
 
     const blog = new Blog({
@@ -51,6 +41,16 @@ router.post('/', mw.userExtractor, async (request, response) => {
 })
 
 
+router.post('/:id/comment', async(request, response) => {
+    const { comment } = request.body
+    const blog = await Blog.findById(request.params.id)
+    if(!comment){
+        return response.status(404).json({ error: 'comment not found' })
+    }
+    blog.comments.push(comment)
+    await blog.save()
+    response.status(201).json(comment)
+})
 
 router.delete('/:id', mw.userExtractor, async (request, response) => {
     /*const decodedToken = jwt.verify(request.token, process.env.SECRET)

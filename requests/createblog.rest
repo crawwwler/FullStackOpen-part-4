@@ -3,8 +3,8 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpbmFsdGVzdGVyIiwiaWQiOiI2NGU0OWU0YzQxMjQyYjE2MTI0ZmM1Y2EiLCJpYXQiOjE2OTI3MTc1MzB9.0eCug5WcjKSsuVJ8J326i7se5jR6klYSGV-Gmy4-kCk
 
 {
-    "title": "another tst",
-    "author": "testersss",
-    "url": "testtstss.com",
+    "title": "emotionblog",
+    "author": "crazy",
+    "url": "myemotions.com",
     "likes": 0
 }
