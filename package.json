@@ -26,6 +26,7 @@
 		"mongoose-unique-validator": "^4.0.0"
 	},
 	"devDependencies": {
+		"@flydotio/dockerfile": "^0.4.10",
 		"cross-env": "^7.0.3",
 		"eslint": "^8.47.0",
 		"eslint-config-prettier": "^9.0.0",
