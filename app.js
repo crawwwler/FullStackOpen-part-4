@@ -21,6 +21,7 @@ mongoose
 		console.log(`error connecting to mongoDB => ${error.message}`)
 	})
 
+app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
 app.use(mw.tokenExtractor)
